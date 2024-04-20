@@ -1,0 +1,29 @@
+[{
+  "id": "1",
+  "title": "Titulo 1",
+  "poster": "https://picsum.photos/200/320",
+  "genre": ["genero_1", "Terror"],
+  "year": 1991
+  },
+  {
+  "id": "2",
+  "title": "Titulo 2",
+  "poster": "https://picsum.photos/200/321",
+  "genre": ["genero_1", "Terror"],
+  "year": 1992
+  },
+  {
+    "id": "3",
+    "title": "Titulo 3",
+    "poster": "https://picsum.photos/200/322",
+    "genre": ["genero_2", "Terror"],
+    "year": 1993
+    },
+    {
+    "id": "4",
+    "title": "Titulo 4",
+    "poster": "https://picsum.photos/200/323",
+    "genre": ["genero_2", "Terror"],
+    "year": 1994
+    }
+]
