@@ -1,13 +1,20 @@
-const express = require('express')
-const crypto = require('node:crypto')
-const cors = require('cors')
+import express, { json } from 'express'
+import { randomUUID } from 'node:crypto'
+import cors from 'cors'
+import { readJSON } from './utils.js'
 
-const datos = require('./datos.json')
-const { validateData, validatePartialData } = require('./schemas/datos')
+// Futuro
+// import datos from './datos.json' with {type: 'json'}
+
+import { validateData, validatePartialData } from './schemas/datos.js'
+
+const datos = readJSON('./datos.json')
+// const datos = require('./datos.json')
+
 const PORT = process.env.PORT ?? 3000
 
 const app = express()
-app.use(express.json())
+app.use(json())
 app.use(cors({
   origin: (origin, callback) => {
     const ACCEPTED_ORIGINS = [
@@ -66,7 +73,7 @@ app.post('/datos', (req, res) => {
   }
 
   const newData = {
-    id: crypto.randomUUID(), // uuid v4
+    id: randomUUID(), // uuid v4
     ...result.data
   }
 

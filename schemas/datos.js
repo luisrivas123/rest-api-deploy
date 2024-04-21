@@ -1,4 +1,4 @@
-const z = require('zod')
+import z from 'zod'
 
 const dataSchema = z.object({
   title: z.string({
@@ -16,15 +16,10 @@ const dataSchema = z.object({
   year: z.number().int().positive().min(1900).max(2024)
 })
 
-function validateData (input) {
+export function validateData (input) {
   return dataSchema.safeParse(input)
 }
 
-function validatePartialData (input) {
+export function validatePartialData (input) {
   return dataSchema.partial().safeParse(input)
-}
-
-module.exports = {
-  validateData,
-  validatePartialData
 }
