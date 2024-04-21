@@ -9,7 +9,7 @@ GET http://localhost:3000/datos/1
 ### Recuperar información por genero
 GET http://localhost:3000/datos?genre=genero_2
 
-### Crear Pokemon
+### Crear dato
 POST http://localhost:3000/datos
 Content-Type: application/json
 
