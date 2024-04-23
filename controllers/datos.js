@@ -1,4 +1,4 @@
-import { DatoModel } from '../models/dato.js'
+import { DatoModel } from '../models/local-file-system/dato.js'
 import { validateData, validatePartialData } from '../schemas/datos.js'
 
 export class DatoController {
