@@ -1,14 +1,20 @@
 import { Router } from 'express'
 import { DatoController } from '../controllers/datos.js'
 
-export const datosRouter = Router()
+export const createDatoRouter = ({ datoModel }) => {
+  const datosRouter = Router()
 
-datosRouter.get('/', DatoController.getAll)
+  const datoController = new DatoController({ datoModel })
 
-datosRouter.get('/:id', DatoController.getById)
+  datosRouter.get('/', datoController.getAll)
 
-datosRouter.post('/', DatoController.create)
+  datosRouter.get('/:id', datoController.getById)
 
-datosRouter.patch('/:id', DatoController.update)
+  datosRouter.post('/', datoController.create)
 
-datosRouter.delete('/:id', DatoController.delete)
+  datosRouter.patch('/:id', datoController.update)
+
+  datosRouter.delete('/:id', datoController.delete)
+
+  return datosRouter
+}

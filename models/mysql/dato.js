@@ -1,6 +1,6 @@
 import mysql from 'mysql2/promise'
 
-const config = {
+const DEFAULT_CONFIG = {
   host: 'localhost',
   user: 'root',
   port: 3306,
@@ -8,7 +8,9 @@ const config = {
   database: 'datosdb'
 }
 
-const connection = await mysql.createConnection(config)
+const connectionString = process.env.DATABASE_URL ?? DEFAULT_CONFIG
+
+const connection = await mysql.createConnection(connectionString)
 
 export class DatoModel {
   static async getAll ({ genre }) {
@@ -26,8 +28,8 @@ export class DatoModel {
       // get the id from the first genre result
       const [{ id }] = genres
 
-      // Get all movies ids from database result
-      // the query a movie genre_movies
+      // Get all datos ids from database result
+      // the query a datos genre_datos
       // join
       // y devolver resultados
       return []
