@@ -1,7 +1,6 @@
 import express, { json } from 'express'
 import { createDatoRouter } from './routes/datos.js'
 import { corsMiddleware } from './middlewares/cors.js'
-import 'dotenv/config'
 
 export const createApp = ({ datoModel }) => {
   const app = express()

@@ -4,9 +4,9 @@
   "main": "app.js",
   "type": "module",
   "scripts": {
-    "start": "node app.js",
+    "start": "node --env-file=.env app.js",
     "start:mysql": "node --watch server-with-mysql.js",
-    "start:local": "node --watch server-with-local.js",
+    "start:local": "node --watch --env-file=.env server-with-local.js",
     "dev": "node --watch app.js"
   },
   "keywords": [],
@@ -14,7 +14,6 @@
   "license": "ISC",
   "description": "",
   "devDependencies": {
-    "nodemon": "3.1.0",
     "standard": "17.1.0"
   },
   "eslintConfig": {
@@ -22,7 +21,6 @@
   },
   "dependencies": {
     "cors": "2.8.5",
-    "dotenv": "16.4.5",
     "express": "4.19.2",
     "mongodb": "6.5.0",
     "mysql2": "3.9.7",
