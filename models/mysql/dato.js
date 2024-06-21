@@ -13,26 +13,28 @@ const connectionString = process.env.DATABASE_URL ?? DEFAULT_CONFIG
 const connection = await mysql.createConnection(connectionString)
 
 export class DatoModel {
-  static async getAll ({ genre }) {
+  static async getAll({ genre }) {
     if (genre) {
       const lowerCaseGenre = genre.toLowerCase()
-
       // get genre from database table using genre names
       const [genres] = await connection.query(
-        'SELECT id, name FROM genre WHERE LOWER(name) =?;', [lowerCaseGenre]
+        'SELECT `id`, `name` FROM `genre` WHERE LOWER(`name`) = ?;',
+        [lowerCaseGenre]
       )
-
       // no genre found
       if (genres.length === 0) return []
-
       // get the id from the first genre result
       const [{ id }] = genres
-
       // Get all datos ids from database result
+      const [datos] = await connection.query(
+        'SELECT title, poster, year, BIN_TO_UUID(id) id FROM dato INNER JOIN dato_genres ON id = dato_id WHERE `genre_id` = ?;',
+        [id]
+      )
       // the query a datos genre_datos
       // join
       // y devolver resultados
-      return []
+
+      return datos
     }
     const [datos] = await connection.query(
       'SELECT title, poster, year, BIN_TO_UUID(id) id FROM dato;'
@@ -40,7 +42,7 @@ export class DatoModel {
     return datos
   }
 
-  static async getById ({ id }) {
+  static async getById({ id }) {
     const [datos] = await connection.query(
       `SELECT title, poster, year, BIN_TO_UUID(id) id 
         FROM dato WHERE id = UUID_TO_BIN(?);`,
@@ -52,7 +54,7 @@ export class DatoModel {
     return datos[0]
   }
 
-  static async create ({ input }) {
+  static async create({ input }) {
     const {
       title,
       poster,
@@ -85,11 +87,7 @@ export class DatoModel {
     return dato[0]
   }
 
-  static async delete ({ id }) {
+  static async delete({ id }) {}
 
-  }
-
-  static async update ({ id, input }) {
-
-  }
+  static async update({ id, input }) {}
 }
