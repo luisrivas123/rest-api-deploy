@@ -5,7 +5,7 @@
   "type": "module",
   "scripts": {
     "start": "node --env-file=.env app.js",
-    "start:mysql": "node --watch --env-file=.env server-with-mysql.js",
+    "start:mysql": "node --watch --env-file=.env.development server-with-mysql.js",
     "start:local": "node --watch --env-file=.env server-with-local.js",
     "dev": "node --watch app.js"
   },
