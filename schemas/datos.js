@@ -16,10 +16,10 @@ const dataSchema = z.object({
   year: z.number().int().positive().min(1900).max(2024)
 })
 
-export function validateData (input) {
+export function validateData(input) {
   return dataSchema.safeParse(input)
 }
 
-export function validatePartialData (input) {
+export function validatePartialData(input) {
   return dataSchema.partial().safeParse(input)
 }

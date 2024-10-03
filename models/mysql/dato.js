@@ -1,11 +1,11 @@
 import mysql from 'mysql2/promise'
 
 const DEFAULT_CONFIG = {
-  host: 'localhost',
-  user: 'root',
-  port: 3306,
-  password: 'password',
-  database: 'datosdb'
+  host: process.env.MYSQL_HOST || 'localhost',
+  user: process.env.MYSQL_USER || 'root',
+  port: process.env.MYSQL_PORT || '3306',
+  password: process.env.MYSQL_PASS || 'password',
+  database: process.env.MYSQL_DB || 'mystore'
 }
 
 const connectionString = process.env.DATABASE_URL ?? DEFAULT_CONFIG
@@ -13,31 +13,9 @@ const connectionString = process.env.DATABASE_URL ?? DEFAULT_CONFIG
 const connection = await mysql.createConnection(connectionString)
 
 export class DatoModel {
-  static async getAll({ genre }) {
-    if (genre) {
-      const lowerCaseGenre = genre.toLowerCase()
-      // get genre from database table using genre names
-      const [genres] = await connection.query(
-        'SELECT `id`, `name` FROM `genre` WHERE LOWER(`name`) = ?;',
-        [lowerCaseGenre]
-      )
-      // no genre found
-      if (genres.length === 0) return []
-      // get the id from the first genre result
-      const [{ id }] = genres
-      // Get all datos ids from database result
-      const [datos] = await connection.query(
-        'SELECT title, poster, year, BIN_TO_UUID(id) id FROM dato INNER JOIN dato_genres ON id = dato_id WHERE `genre_id` = ?;',
-        [id]
-      )
-      // the query a datos genre_datos
-      // join
-      // y devolver resultados
-
-      return datos
-    }
+  static async getAll() {
     const [datos] = await connection.query(
-      'SELECT title, poster, year, BIN_TO_UUID(id) id FROM dato;'
+      'SELECT BIN_TO_UUID(id) id, name, lastname, document_type, document_id, phone, email FROM user;'
     )
     return datos
   }
@@ -55,36 +33,54 @@ export class DatoModel {
   }
 
   static async create({ input }) {
-    const {
-      title,
-      poster,
-      // genre: genreInput, // genre is an array
-      year
-    } = input
+    const { name, lastname, document_type, document_id, phone, email } = input
 
     const [uuidResult] = await connection.query('SELECT UUID() uuid;')
     const [{ uuid }] = uuidResult
 
     try {
       await connection.query(
-        `INSERT INTO dato (id, title, poster, year)
-        VALUES (UUID_TO_BIN("${uuid}"), ?, ?, ?)`,
-        [title, poster, year]
+        `INSERT INTO user (id, name, lastname, document_type, document_id, phone, email)
+        VALUES (UUID_TO_BIN("${uuid}"), ?, ?, ?, ?, ?, ?)`,
+        [name, lastname, document_type, document_id, phone, email]
       )
     } catch (e) {
       // Pueden enviarle información sensible
-      throw new Error('Error creating dato')
+      // throw new Error('Error creating dato')
       // Enviar la traza a un sercicio interno
       // sendLog(e)
+      console.log(e)
+
+      return e
     }
 
     const [dato] = await connection.query(
-      `SELECT title, poster, year, BIN_TO_UUID(id) id 
-        FROM dato WHERE id = UUID_TO_BIN(?);`,
+      `SELECT name, lastname, document_type, document_id, phone, email, BIN_TO_UUID(id) id, create_at 
+        FROM user WHERE id = UUID_TO_BIN(?);`,
       [uuid]
     )
 
     return dato[0]
+  }
+
+  static async createUserAuth({ authData }) {
+    const { id, email, password } = authData
+
+    try {
+      await connection.query(
+        `INSERT INTO auth (id, email, password)
+        VALUES (?, ?, ?)`,
+        [id, email, password]
+      )
+    } catch (e) {
+      // Pueden enviarle información sensible
+      // throw new Error('Error creating dato')
+      // Enviar la traza a un sercicio interno
+      // sendLog(e)
+      console.log(e)
+
+      return e
+    }
   }
 
   static async delete({ id }) {}

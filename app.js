@@ -1,5 +1,6 @@
 import express, { json } from 'express'
 import { createDatoRouter } from './routes/datos.js'
+import { createUserRouter } from './routes/user.js'
 import { corsMiddleware } from './middlewares/cors.js'
 
 export const createApp = ({ datoModel }) => {
@@ -13,6 +14,7 @@ export const createApp = ({ datoModel }) => {
   })
 
   app.use('/datos', createDatoRouter({ datoModel }))
+  app.use('/user', createUserRouter({ datoModel }))
 
   const PORT = process.env.PORT ?? 3000
 
