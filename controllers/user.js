@@ -1,4 +1,7 @@
 import { validateData, validatePartialData } from '../schemas/user.js'
+import bcrypt from 'bcrypt'
+
+const SALT_ROUNDS = process.env.SALT_ROUNDS ?? 5
 
 export class UserController {
   constructor({ datoModel }) {
@@ -15,7 +18,7 @@ export class UserController {
   getById = async (req, res) => {
     const { id } = req.params
     const dato = await this.datoModel.getById({ id })
-    if (dato) return res.json(dato)
+    if (!dato.error) return res.json(dato)
     res.status(404).json({ message: 'user not found' })
   }
 
@@ -33,10 +36,12 @@ export class UserController {
     }
     res.status(201).json(newData)
 
+    const hashedPassword = await bcrypt.hash(result.data.password, 5)
+
     const authData = {
       id: newData.id,
       email: result.data.email,
-      password: result.data.password
+      password: hashedPassword
     }
 
     const newAuthData = await this.datoModel.createUserAuth({ authData })

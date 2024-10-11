@@ -21,15 +21,22 @@ export class DatoModel {
   }
 
   static async getById({ id }) {
-    const [datos] = await connection.query(
-      `SELECT title, poster, year, BIN_TO_UUID(id) id 
-        FROM dato WHERE id = UUID_TO_BIN(?);`,
-      [id]
-    )
+    try {
+      const [datos] = await connection.query(
+        `SELECT BIN_TO_UUID(id) id, name, lastname, document_type, document_id, phone, email 
+          FROM user WHERE id = UUID_TO_BIN(?);`,
+        [id]
+      )
 
-    if (datos.length === 0) return null
+      if (datos.length === 0) return null
 
-    return datos[0]
+      return datos[0]
+    } catch (e) {
+      if (e.errno) {
+        return { error: 'user not found' }
+      }
+      return 'otro'
+    }
   }
 
   static async create({ input }) {
@@ -49,7 +56,7 @@ export class DatoModel {
       // throw new Error('Error creating dato')
       // Enviar la traza a un sercicio interno
       // sendLog(e)
-      console.log(e)
+      // console.log(e)
 
       return e
     }
@@ -69,15 +76,15 @@ export class DatoModel {
     try {
       await connection.query(
         `INSERT INTO auth (id, email, password)
-        VALUES (?, ?, ?)`,
-        [id, email, password]
+        VALUES (UUID_TO_BIN("${id}"), ?, ?)`,
+        [email, password]
       )
     } catch (e) {
       // Pueden enviarle información sensible
       // throw new Error('Error creating dato')
       // Enviar la traza a un sercicio interno
       // sendLog(e)
-      console.log(e)
+      // console.log(e)
 
       return e
     }

@@ -1,23 +1,23 @@
 ### Recuperar información
-GET http://localhost:4000
+GET http://localhost:3000
 ### Recuperar información
-GET http://localhost:4000/user
+GET http://localhost:3000/user
 ### Recuperar información por id
-GET http://localhost:3000/datos/6c853cd3-018e-11ef-b3ea-0242ac150002
+GET http://localhost:3000/user/3f2266e5-81da-11ef-9b19-0242ac120002
 ### Recuperar información por genero
 GET http://localhost:3000/datos?genre=Terror
 ### Crear dato
-POST http://localhost:3000/datos
+POST http://localhost:3000/user
 Content-Type: application/json
 
 {
-    "title": "Titulo 3",
-    "poster": "https://picsum.photos/200/304",
-    "genre": [
-        "genero_3",
-        "Action"
-    ],
-    "year": 2010
+	"name": "Luis1",
+	"lastname": "Rivas",
+	"document_type": "cedula",
+	"document_id": "13464178",
+	"phone": "6531341",
+	"email": "luis@corr1eo1.com",
+	"password": "123456"
 }
 
 ### Editar parcialmente dato
