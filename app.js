@@ -23,7 +23,7 @@ export const createApp = ({ datoModel }) => {
     req.session = { user: null }
 
     try {
-      const data = jwt.verify(token, SECRET_JWT_KEY)
+      const data = jwt.verify(token, process.env.SECRET_JWT_KEY)
       req.session.user = data
     } catch {}
 
@@ -56,7 +56,7 @@ export const createApp = ({ datoModel }) => {
     // }
   })
 
-  const PORT = process.env.PORT ?? 3000
+  const PORT = process.env.PORT ?? 4000
 
   app.listen(PORT, () => {
     console.log(`server listening on port http://localhost:${PORT}`)
