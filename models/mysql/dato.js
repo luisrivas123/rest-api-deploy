@@ -95,12 +95,12 @@ export class DatoModel {
   static async update({ id, input }) {}
 
   static async query({ input }) {
-    const { phone } = input
+    // const { phone } = input
 
     try {
       const [datos] = await connection.query(
         'SELECT * FROM auth WHERE phone = ?;',
-        [phone]
+        [input]
       )
 
       if (datos.length === 0) return null
