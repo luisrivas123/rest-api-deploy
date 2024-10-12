@@ -8,6 +8,8 @@ import { createUserRouter } from './routes/user.js'
 import { createAuthRouter } from './routes/auth.js'
 import { corsMiddleware } from './middlewares/cors.js'
 
+const SECRET_JWT_KEY = 'Hola'
+
 export const createApp = ({ datoModel }) => {
   const app = express()
   app.use(json())
@@ -17,10 +19,11 @@ export const createApp = ({ datoModel }) => {
 
   app.use((req, res, next) => {
     const token = req.cookies.access_token
+
     req.session = { user: null }
 
     try {
-      const data = jwt.verify(token, process.dev.SECRET_JWT_KEY)
+      const data = jwt.verify(token, SECRET_JWT_KEY)
       req.session.user = data
     } catch {}
 
@@ -34,6 +37,24 @@ export const createApp = ({ datoModel }) => {
   app.use('/datos', createDatoRouter({ datoModel }))
   app.use('/user', createUserRouter({ datoModel }))
   app.use('/login', createAuthRouter({ datoModel }))
+
+  app.post('/logout', (req, res) => {
+    res.clearCookie('access_token').json({ message: 'Logout successful' })
+  })
+
+  app.get('/protected', (req, res) => {
+    const { user } = req.session
+
+    if (!user) return res.status(403).send('Access not authorized')
+    res.send('<h1>Hola</h1>')
+
+    // try {
+    //   const data = jwt.verify(token, SECRET_JWT_KEY)
+    //   res.render('protected', data)
+    // } catch (error) {
+    //   res.status(401).send('Access not authorized')
+    // }
+  })
 
   const PORT = process.env.PORT ?? 3000
 

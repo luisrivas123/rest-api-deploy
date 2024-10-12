@@ -31,10 +31,10 @@ export class AuthController {
         return res.status(401).json({ error: 'Error de autenticación' })
       }
       const token = jwt.sign(
-        { id: data._id, phone: data.phone },
+        { phone: data.phone },
         process.env.SECRET_JWT_KEY,
         {
-          expiresIn: '30m'
+          expiresIn: '1m'
         }
       )
       res
@@ -45,7 +45,7 @@ export class AuthController {
           maxAge: 1000 * 60 * 60 // la cookie tiene un tiempo de validez de una hora
         })
         .status(201)
-        .send({ phone, token })
+        .send({ user: data.phone, token })
     } catch (e) {
       res.status(401).json({ error: 'Error de autenticación' })
     }
