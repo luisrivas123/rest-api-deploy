@@ -1,7 +1,7 @@
 import { validateData, validatePartialData } from '../schemas/user.js'
 import bcrypt from 'bcrypt'
 
-const SALT_ROUNDS = process.env.SALT_ROUNDS ?? 5
+// const SALT_ROUNDS = process.env.SALT_ROUNDS ?? 5
 
 export class UserController {
   constructor({ datoModel }) {
@@ -41,6 +41,7 @@ export class UserController {
     const authData = {
       id: newData.id,
       email: result.data.email,
+      phone: result.data.phone,
       password: hashedPassword
     }
 

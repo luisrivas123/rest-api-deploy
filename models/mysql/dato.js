@@ -71,20 +71,20 @@ export class DatoModel {
   }
 
   static async createUserAuth({ authData }) {
-    const { id, email, password } = authData
+    const { id, email, phone, password } = authData
 
     try {
       await connection.query(
-        `INSERT INTO auth (id, email, password)
-        VALUES (UUID_TO_BIN("${id}"), ?, ?)`,
-        [email, password]
+        `INSERT INTO auth (id, email, phone, password)
+        VALUES (UUID_TO_BIN("${id}"), ?, ?, ?)`,
+        [email, phone, password]
       )
     } catch (e) {
       // Pueden enviarle información sensible
       // throw new Error('Error creating dato')
       // Enviar la traza a un sercicio interno
       // sendLog(e)
-      // console.log(e)
+      console.log(e)
 
       return e
     }
@@ -93,4 +93,25 @@ export class DatoModel {
   static async delete({ id }) {}
 
   static async update({ id, input }) {}
+
+  static async query({ input }) {
+    const { phone } = input
+
+    try {
+      const [datos] = await connection.query(
+        'SELECT * FROM auth WHERE phone = ?;',
+        [phone]
+      )
+
+      if (datos.length === 0) return null
+
+      return datos[0]
+    } catch (e) {
+      console.log(e)
+      if (e.errno) {
+        return { error: 'user not found' }
+      }
+      return 'otro'
+    }
+  }
 }
