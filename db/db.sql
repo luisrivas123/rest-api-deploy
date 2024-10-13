@@ -1,48 +1,40 @@
 -- crear db
-DROP DATABASE IF EXISTS datosdb;
-CREATE DATABASE datosdb;
+DROP DATABASE IF EXISTS envirapid_db;
+CREATE DATABASE envirapid_db;
 
 -- usar
-USE datosdb;
+USE envirapid_db;
 
--- crear la tabla datos
-CREATE TABLE dato (
-  id BINARY(16) PRIMARY KEY DEFAULT (UUID_TO_BIN(UUID())),
-  title VARCHAR(255) NOT NULL,
-  poster TEXT,
-  year INT NOT NULL
+DROP TABLE IF EXISTS user;
+
+-- Crear tabla user
+CREATE TABLE user (
+	id BINARY(16) DEFAULT (UUID_TO_BIN(UUID())),
+	name VARCHAR(32) NOT NULL,
+	lastname VARCHAR(32) NOT NULL,
+	document_type VARCHAR(32) NOT NULL,
+	document_id VARCHAR(32) NOT NULL UNIQUE,
+	phone VARCHAR(32) NOT NULL UNIQUE,
+	email VARCHAR(100) NOT NULL UNIQUE,
+	create_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+	PRIMARY KEY (id)
 );
 
-CREATE TABLE genre (
-  id INT AUTO_INCREMENT PRIMARY KEY,
-  name VARCHAR(255) NOT NULL UNIQUE
+
+INSERT INTO user (id, name, lastname, document_type, document_id, phone, email) 
+VALUES ((UUID_TO_BIN(UUID()), 'Luis', 'Rivas', 'cedula', '123456789', '31168451', 'luis@corre.com');
+
+SELECT id, name, lastname, document_type, document_id, phone, email FROM user;
+SELECT * FROM user;
+-- Crear tabla auth
+DROP TABLE IF EXISTS auth;
+
+CREATE TABLE auth (
+	id BINARY(16) DEFAULT (UUID_TO_BIN(UUID())),
+	email VARCHAR(100) NOT NULL UNIQUE,
+	phone VARCHAR(32) NOT NULL UNIQUE,
+	password VARCHAR(64) NOT NULL UNIQUE,
+	PRIMARY KEY (id)
 );
 
-CREATE TABLE dato_genres (
-  dato_id BINARY(16) REFERENCES dato(id),
-  genre_id INT REFERENCES genre(id),
-  PRIMARY KEY (dato_id, genre_id)
-);
-
--- añadir datos
-INSERT INTO genre (name) VALUES
-('genero_1'),
-('genero_2'),
-('genero_3'),
-('Terror');
-
-INSERT INTO dato (id, title, poster, year) VALUES
-(UUID_TO_BIN(UUID()), 'Titulo 1', 'https://picsum.photos/200/320', 1990),
-(UUID_TO_BIN(UUID()), 'Titulo 2', 'https://picsum.photos/200/321', 1991),
-(UUID_TO_BIN(UUID()), 'Titulo 3', 'https://picsum.photos/200/322', 1992);
-
-INSERT INTO dato_genres (dato_id, genre_id)
-VALUES
-  ((SELECT id FROM dato WHERE title = 'Titulo 1'), (SELECT id FROM genre WHERE name = 'genero_1')),
-  ((SELECT id FROM dato WHERE title = 'Titulo 1'), (SELECT id FROM genre WHERE name = 'Terror')),
-  ((SELECT id FROM dato WHERE title = 'Titulo 2'), (SELECT id FROM genre WHERE name = 'genero_1')),
-  ((SELECT id FROM dato WHERE title = 'Titulo 2'), (SELECT id FROM genre WHERE name = 'Terror')),
-  ((SELECT id FROM dato WHERE title = 'Titulo 3'), (SELECT id FROM genre WHERE name = 'genero_3'));
- 
-SELECT * FROM dato;
-SELECT *, BIN_TO_UUID(id) id FROM `dato`;
+SELECT * FROM auth WHERE phone = 6533412;

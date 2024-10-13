@@ -20,6 +20,13 @@ export class DatoModel {
     return datos
   }
 
+  static async getAllCargoDelivery() {
+    const [datos] = await connection.query(
+      'SELECT BIN_TO_UUID(id) id, type_cargo, description_cargo, oringin_cargo, destiny_cargo, height_cargo, length_cargo, width_cargo, weight_cargo, with_load, with_schedule, payment_method, delivery_request_status, create_at FROM cargo;'
+    )
+    return datos
+  }
+
   static async getById({ id }) {
     try {
       const [datos] = await connection.query(
@@ -32,10 +39,31 @@ export class DatoModel {
 
       return datos[0]
     } catch (e) {
-      if (e.errno) {
-        return { error: 'user not found' }
-      }
-      return 'otro'
+      throw new Error('Error creating dato')
+      //   if (e.errno) {
+      //     return { message: 'user not found' }
+      //   }
+      //   return 'otro'
+    }
+  }
+
+  static async getByIdCargoDelivery({ id }) {
+    try {
+      const [datos] = await connection.query(
+        `SELECT BIN_TO_UUID(id) id, type_cargo, description_cargo, oringin_cargo, destiny_cargo, height_cargo, length_cargo, width_cargo, weight_cargo, with_load, with_schedule, payment_method, delivery_request_status, create_at 
+          FROM cargo WHERE id = UUID_TO_BIN(?);`,
+        [id]
+      )
+
+      if (datos.length === 0) return null
+
+      return datos[0]
+    } catch (e) {
+      throw new Error('Error creating dato')
+      //   if (e.errno) {
+      //     return { message: 'user not found' }
+      //   }
+      //   return 'otro'
     }
   }
 
@@ -68,6 +96,77 @@ export class DatoModel {
     )
 
     return dato[0]
+  }
+
+  static async createCargoDelivery({ input }) {
+    const {
+      type_cargo,
+      description_cargo,
+      oringin_cargo,
+      destiny_cargo,
+      height_cargo,
+      length_cargo,
+      width_cargo,
+      weight_cargo,
+      with_load,
+      with_schedule,
+      payment_method,
+      delivery_request_status
+    } = input
+
+    const [uuidResult] = await connection.query('SELECT UUID() uuid;')
+    const [{ uuid }] = uuidResult
+
+    try {
+      await connection.query(
+        `INSERT INTO cargo (id, type_cargo, description_cargo, oringin_cargo, destiny_cargo, height_cargo, length_cargo, width_cargo, weight_cargo, with_load, with_schedule, payment_method, delivery_request_status)
+        VALUES (UUID_TO_BIN("${uuid}"), ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, false)`,
+        [
+          type_cargo,
+          description_cargo,
+          oringin_cargo,
+          destiny_cargo,
+          height_cargo,
+          length_cargo,
+          width_cargo,
+          weight_cargo,
+          with_load,
+          with_schedule,
+          payment_method,
+          delivery_request_status
+        ]
+      )
+    } catch (e) {
+      // Pueden enviarle información sensible
+      // throw new Error('Error creating dato')
+      // Enviar la traza a un sercicio interno
+      // sendLog(e)
+      console.log(e)
+
+      return e
+    }
+
+    const [dato] = await connection.query(
+      `SELECT BIN_TO_UUID(id) id, type_cargo, description_cargo, oringin_cargo, destiny_cargo, height_cargo, length_cargo, width_cargo, weight_cargo, with_load, with_schedule, payment_method, delivery_request_status, create_at 
+        FROM cargo WHERE id = UUID_TO_BIN(?);`,
+      [uuid]
+    )
+
+    return dato[0]
+  }
+
+  static async insertCargoDelivery({ input }) {
+    try {
+      await connection.query(`INSERT INTO user_cargo SET ?`, [input])
+    } catch (e) {
+      // Pueden enviarle información sensible
+      throw new Error('Error creating dato')
+      // Enviar la traza a un sercicio interno
+      // sendLog(e)
+      // console.log(e)
+
+      // return e
+    }
   }
 
   static async createUserAuth({ authData }) {

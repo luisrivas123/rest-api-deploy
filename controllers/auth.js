@@ -1,6 +1,7 @@
 import { validateData } from '../schemas/auth.js'
 import bcrypt from 'bcrypt'
 import jwt from 'jsonwebtoken'
+import { stringify } from 'uuid'
 
 export class AuthController {
   constructor({ datoModel }) {
@@ -31,7 +32,7 @@ export class AuthController {
         return res.status(401).json({ error: 'Error de autenticación' })
       }
       const token = jwt.sign(
-        { phone: data.phone },
+        { id: stringify(data.id), phone: data.phone },
         process.env.SECRET_JWT_KEY,
         {
           expiresIn: '1m'

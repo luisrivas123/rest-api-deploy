@@ -6,6 +6,7 @@ import cookieParser from 'cookie-parser'
 import { createDatoRouter } from './routes/datos.js'
 import { createUserRouter } from './routes/user.js'
 import { createAuthRouter } from './routes/auth.js'
+import { createCargoDeliveryRouter } from './routes/cargo-delivery.js'
 import { corsMiddleware } from './middlewares/cors.js'
 
 const SECRET_JWT_KEY = 'Hola'
@@ -37,6 +38,7 @@ export const createApp = ({ datoModel }) => {
   app.use('/datos', createDatoRouter({ datoModel }))
   app.use('/user', createUserRouter({ datoModel }))
   app.use('/login', createAuthRouter({ datoModel }))
+  app.use('/cargo-delivery', createCargoDeliveryRouter({ datoModel }))
 
   app.post('/logout', (req, res) => {
     res.clearCookie('access_token').json({ message: 'Logout successful' })
@@ -44,6 +46,7 @@ export const createApp = ({ datoModel }) => {
 
   app.get('/protected', (req, res) => {
     const { user } = req.session
+    console.log(user)
 
     if (!user) return res.status(403).send('Access not authorized')
     res.send('<h1>Hola</h1>')

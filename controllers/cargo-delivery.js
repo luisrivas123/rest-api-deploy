@@ -1,58 +1,52 @@
-import { validateData, validatePartialData } from '../schemas/user.js'
-import bcrypt from 'bcrypt'
+import { parse } from 'uuid'
+import { validateData, validatePartialData } from '../schemas/cargo-delivery.js'
 
-const SALT_ROUNDS = process.env.SALT_ROUNDS ?? 5
-
-export class UserController {
+export class CragoDeliveryController {
   constructor({ datoModel }) {
     this.datoModel = datoModel
   }
 
   getAll = async (req, res) => {
-    // const { genre } = req.query
-    // const datos = await this.datoModel.getAll({ genre })
-    const datos = await this.datoModel.getAll()
+    const { genre } = req.query
+    const datos = await this.datoModel.getAllCargoDelivery({ genre })
     res.json(datos)
   }
 
   getById = async (req, res) => {
     const { id } = req.params
     try {
-      const dato = await this.datoModel.getById({ id })
-      if (!dato) return res.status(404).json({ message: 'user not found' })
+      const dato = await this.datoModel.getByIdCargoDelivery({ id })
+      if (!dato)
+        return res.status(404).json({ message: 'Cargo delivery not found' })
       return res.json(dato)
     } catch (error) {
-      res.status(404).json({ message: 'user not found' })
+      res.status(404).json({ message: 'Cargo delivery not found' })
     }
   }
 
   create = async (req, res) => {
+    const { user } = req.session
+
+    if (!user) return res.status(403).send('Access not authorized')
+
     const result = validateData(req.body)
 
     if (result.error) {
       return res.status(400).json({ error: JSON.parse(result.error.message) })
     }
 
-    const newData = await this.datoModel.create({ input: result.data })
+    const newData = await this.datoModel.createCargoDelivery({
+      input: result.data
+    })
 
-    if (newData.errno) {
-      return res.status(401).json({ error: 'Error creando usuario' })
-    }
     res.status(201).json(newData)
 
-    const hashedPassword = await bcrypt.hash(
-      result.data.password,
-      parseInt(SALT_ROUNDS)
-    )
-
-    const authData = {
-      id: newData.id,
-      email: result.data.email,
-      phone: result.data.phone,
-      password: hashedPassword
+    const input = {
+      user_id: Buffer.from(parse(user.id)),
+      cargo_id: Buffer.from(parse(newData.id))
     }
 
-    const newAuthData = await this.datoModel.createUserAuth({ authData })
+    await this.datoModel.insertCargoDelivery({ input })
   }
 
   update = async (req, res) => {
