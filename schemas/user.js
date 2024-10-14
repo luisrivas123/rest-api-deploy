@@ -9,7 +9,7 @@ const userSchema = z.object({
     invalid_type_error: 'lastname title must be a string',
     required_error: 'lastname title is required'
   }),
-  document_type: z.enum(['cedula', 'pasaporte'], {
+  document_type: z.enum(['cedula', 'pasaporte', 'cedula-extranjeria'], {
     required_error: 'Document type genre is required',
     invalid_type_error: 'movie genre must be array of enum genre'
   }),

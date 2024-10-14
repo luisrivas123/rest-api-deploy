@@ -160,11 +160,10 @@ export class DatoModel {
       await connection.query(`INSERT INTO user_cargo SET ?`, [input])
     } catch (e) {
       // Pueden enviarle información sensible
-      throw new Error('Error creating dato')
+      // throw new Error('Error creating dato')
       // Enviar la traza a un sercicio interno
       // sendLog(e)
       // console.log(e)
-
       // return e
     }
   }

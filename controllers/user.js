@@ -38,7 +38,24 @@ export class UserController {
     if (newData.errno) {
       return res.status(401).json({ error: 'Error creando usuario' })
     }
-    res.status(201).json(newData)
+
+    const token = jwt.sign(
+      { id: stringify(data.id), phone: data.phone },
+      process.env.SECRET_JWT_KEY,
+      {
+        expiresIn: '30m'
+      }
+    )
+    res
+      .cookie('access_token', token, {
+        httpOnly: true, // LA cookie solo se puede acceder en el servidor
+        secure: process.env.NODE_ENV === 'production', // La cookie solo se pudede acceder en https
+        sameSite: 'strict', // la coockie solo se puede acceder en el mismo dominio
+        maxAge: 1000 * 60 * 60 // la cookie tiene un tiempo de validez de una hora
+      })
+      .status(201)
+      .send({ phone: data.phone, token })
+    // res.status(201).json(newData)
 
     const hashedPassword = await bcrypt.hash(
       result.data.password,

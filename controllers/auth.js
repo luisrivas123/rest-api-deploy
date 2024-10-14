@@ -35,7 +35,7 @@ export class AuthController {
         { id: stringify(data.id), phone: data.phone },
         process.env.SECRET_JWT_KEY,
         {
-          expiresIn: '1m'
+          expiresIn: '30m'
         }
       )
       res
@@ -46,7 +46,7 @@ export class AuthController {
           maxAge: 1000 * 60 * 60 // la cookie tiene un tiempo de validez de una hora
         })
         .status(201)
-        .send({ user: data.phone, token })
+        .send({ phone: data.phone, token })
     } catch (e) {
       res.status(401).json({ error: 'Error de autenticación' })
     }

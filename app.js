@@ -40,6 +40,22 @@ export const createApp = ({ datoModel }) => {
   app.use('/login', createAuthRouter({ datoModel }))
   app.use('/cargo-delivery', createCargoDeliveryRouter({ datoModel }))
 
+  app.get('/check-auth', (req, res) => {
+    // const token = req.cookies.access_token;
+
+    const { user } = req.session
+
+    if (!user) return res.status(401).json({ message: 'Unauthorized' })
+    res.status(200).json({ user: user })
+
+    // try {
+    //     const decoded = jwt.verify(token, 'your_secret_key'); // Verifica el token con tu clave secreta
+    //     return res.status(200).json({ user: decoded });
+    // } catch (err) {
+    //     return res.status(401).json({ message: 'Unauthorized' });
+    // }
+  })
+
   app.post('/logout', (req, res) => {
     res.clearCookie('access_token').json({ message: 'Logout successful' })
   })
