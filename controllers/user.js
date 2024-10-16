@@ -1,4 +1,5 @@
 import { validateData, validatePartialData } from '../schemas/user.js'
+import jwt from 'jsonwebtoken'
 import bcrypt from 'bcrypt'
 
 const SALT_ROUNDS = process.env.SALT_ROUNDS ?? 5
@@ -40,7 +41,7 @@ export class UserController {
     }
 
     const token = jwt.sign(
-      { id: stringify(data.id), phone: data.phone },
+      { id: newData.id, phone: newData.phone },
       process.env.SECRET_JWT_KEY,
       {
         expiresIn: '30m'
@@ -54,7 +55,7 @@ export class UserController {
         maxAge: 1000 * 60 * 60 // la cookie tiene un tiempo de validez de una hora
       })
       .status(201)
-      .send({ phone: data.phone, token })
+      .send({ phone: newData.phone, token })
     // res.status(201).json(newData)
 
     const hashedPassword = await bcrypt.hash(

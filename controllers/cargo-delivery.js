@@ -42,8 +42,8 @@ export class CragoDeliveryController {
     res.status(201).json(newData)
 
     const input = {
-      user_id: Buffer.from(parse(user.id)),
-      cargo_id: Buffer.from(parse(newData.id))
+      user_id: user.id,
+      cargo_id: newData.id
     }
 
     await this.datoModel.insertCargoDelivery({ input })

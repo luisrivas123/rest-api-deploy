@@ -156,14 +156,20 @@ export class DatoModel {
   }
 
   static async insertCargoDelivery({ input }) {
+    const { user_id, cargo_id } = input
+
     try {
-      await connection.query(`INSERT INTO user_cargo SET ?`, [input])
+      await connection.query(
+        `INSERT INTO user_cargo SET user_id = UUID_TO_BIN(?), cargo_id = UUID_TO_BIN(?)`,
+        [user_id, cargo_id]
+      )
+      // await connection.query(`INSERT INTO user_cargo SET ?`, [input])
     } catch (e) {
       // Pueden enviarle información sensible
       // throw new Error('Error creating dato')
       // Enviar la traza a un sercicio interno
       // sendLog(e)
-      // console.log(e)
+      console.log(e)
       // return e
     }
   }
