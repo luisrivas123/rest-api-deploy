@@ -37,7 +37,7 @@ export class UserController {
     const newData = await this.datoModel.create({ input: result.data })
 
     if (newData.errno) {
-      return res.status(401).json({ error: 'Error creando usuario' })
+      return res.status(400).json({ error: 'Error creando usuario' })
     }
 
     const token = jwt.sign(

@@ -20,19 +20,32 @@ export class DatoModel {
     return datos
   }
 
-  static async getAllCargoDelivery() {
-    const [datos] = await connection.query(
-      'SELECT BIN_TO_UUID(id) id, type_cargo, description_cargo, oringin_cargo, destiny_cargo, height_cargo, length_cargo, width_cargo, weight_cargo, with_load, with_schedule, payment_method, delivery_request_status, create_at FROM cargo;'
-    )
-    return datos
-  }
-
-  static async getById({ id }) {
+  static async getAllCargoDelivery({ user_id }) {
     try {
       const [datos] = await connection.query(
-        `SELECT BIN_TO_UUID(id) id, name, lastname, document_type, document_id, phone, email 
-          FROM user WHERE id = UUID_TO_BIN(?);`,
-        [id]
+        `SELECT BIN_TO_UUID(id) id, BIN_TO_UUID(user_id) user_id, type_cargo, description_cargo, oringin_cargo, destiny_cargo, height_cargo, length_cargo, width_cargo, weight_cargo, with_load, with_schedule, payment_method, delivery_request_status, create_at 
+          FROM cargo WHERE user_id = UUID_TO_BIN(?);`,
+        [user_id]
+      )
+
+      if (datos.length === 0) return null
+
+      return datos
+    } catch (e) {
+      // throw new Error('Error creating dato')
+      //   if (e.errno) {
+      //     return { message: 'user not found' }
+      //   }
+      return e
+    }
+  }
+
+  static async getById({ user_id, id }) {
+    try {
+      const [datos] = await connection.query(
+        `SELECT BIN_TO_UUID(id) id, BIN_TO_UUID(user_id) user_id, type_cargo, description_cargo, oringin_cargo, destiny_cargo, height_cargo, length_cargo, width_cargo, weight_cargo, with_load, with_schedule, payment_method, delivery_request_status, create_at 
+          FROM cargo WHERE user_id = UUID_TO_BIN(?) AND id = UUID_TO_BIN(?);`,
+        [user_id, id]
       )
 
       if (datos.length === 0) return null
@@ -50,7 +63,7 @@ export class DatoModel {
   static async getByIdCargoDelivery({ id }) {
     try {
       const [datos] = await connection.query(
-        `SELECT BIN_TO_UUID(id) id, type_cargo, description_cargo, oringin_cargo, destiny_cargo, height_cargo, length_cargo, width_cargo, weight_cargo, with_load, with_schedule, payment_method, delivery_request_status, create_at 
+        `SELECT BIN_TO_UUID(id) id, BIN_TO_UUID(user_id) user_id, type_cargo, description_cargo, oringin_cargo, destiny_cargo, height_cargo, length_cargo, width_cargo, weight_cargo, with_load, with_schedule, payment_method, delivery_request_status, create_at 
           FROM cargo WHERE id = UUID_TO_BIN(?);`,
         [id]
       )
@@ -100,6 +113,7 @@ export class DatoModel {
 
   static async createCargoDelivery({ input }) {
     const {
+      user_id,
       type_cargo,
       description_cargo,
       oringin_cargo,
@@ -119,9 +133,10 @@ export class DatoModel {
 
     try {
       await connection.query(
-        `INSERT INTO cargo (id, type_cargo, description_cargo, oringin_cargo, destiny_cargo, height_cargo, length_cargo, width_cargo, weight_cargo, with_load, with_schedule, payment_method, delivery_request_status)
-        VALUES (UUID_TO_BIN("${uuid}"), ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, false)`,
+        `INSERT INTO cargo (id, user_id, type_cargo, description_cargo, oringin_cargo, destiny_cargo, height_cargo, length_cargo, width_cargo, weight_cargo, with_load, with_schedule, payment_method, delivery_request_status)
+        VALUES (UUID_TO_BIN("${uuid}"), UUID_TO_BIN(?), ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, false)`,
         [
+          user_id,
           type_cargo,
           description_cargo,
           oringin_cargo,
@@ -147,7 +162,7 @@ export class DatoModel {
     }
 
     const [dato] = await connection.query(
-      `SELECT BIN_TO_UUID(id) id, type_cargo, description_cargo, oringin_cargo, destiny_cargo, height_cargo, length_cargo, width_cargo, weight_cargo, with_load, with_schedule, payment_method, delivery_request_status, create_at 
+      `SELECT BIN_TO_UUID(id) id, BIN_TO_UUID(user_id) user_id, type_cargo, description_cargo, oringin_cargo, destiny_cargo, height_cargo, length_cargo, width_cargo, weight_cargo, with_load, with_schedule, payment_method, delivery_request_status, create_at 
         FROM cargo WHERE id = UUID_TO_BIN(?);`,
       [uuid]
     )
@@ -194,7 +209,23 @@ export class DatoModel {
     }
   }
 
-  static async delete({ id }) {}
+  static async delete({ id }) {
+    try {
+      await connection.query(
+        `INSERT INTO user (id, name, lastname, document_type, document_id, phone, email)
+        VALUES (UUID_TO_BIN("${uuid}"), ?, ?, ?, ?, ?, ?)`,
+        [name, lastname, document_type, document_id, phone, email]
+      )
+    } catch (e) {
+      // Pueden enviarle información sensible
+      // throw new Error('Error creating dato')
+      // Enviar la traza a un sercicio interno
+      // sendLog(e)
+      // console.log(e)
+
+      return e
+    }
+  }
 
   static async update({ id, input }) {}
 

@@ -8,14 +8,30 @@ export class CragoDeliveryController {
 
   getAll = async (req, res) => {
     const { genre } = req.query
-    const datos = await this.datoModel.getAllCargoDelivery({ genre })
+    const { user } = req.session
+
+    if (!user) return res.status(403).send('Access not authorized')
+
+    const user_id = user.id
+
+    const datos = await this.datoModel.getAllCargoDelivery({ genre, user_id })
+
+    if (!datos)
+      return res.status(404).json({ message: 'Cargo delivery not found' })
+
     res.json(datos)
   }
 
   getById = async (req, res) => {
     const { id } = req.params
+    const { user } = req.session
+
+    if (!user) return res.status(403).send('Access not authorized')
+
+    const user_id = user.id
+
     try {
-      const dato = await this.datoModel.getByIdCargoDelivery({ id })
+      const dato = await this.datoModel.getByIdCargoDelivery({ user_id, id })
       if (!dato)
         return res.status(404).json({ message: 'Cargo delivery not found' })
       return res.json(dato)
@@ -35,18 +51,17 @@ export class CragoDeliveryController {
       return res.status(400).json({ error: JSON.parse(result.error.message) })
     }
 
+    result.data.user_id = user.id
+
     const newData = await this.datoModel.createCargoDelivery({
       input: result.data
     })
 
-    res.status(201).json(newData)
-
-    const input = {
-      user_id: user.id,
-      cargo_id: newData.id
+    if (newData.errno) {
+      return res.status(400).json({ error: 'Error creando solicitud de carga' })
     }
 
-    await this.datoModel.insertCargoDelivery({ input })
+    res.status(201).json(newData)
   }
 
   update = async (req, res) => {
