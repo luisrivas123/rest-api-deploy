@@ -44,7 +44,7 @@ export class UserController {
       { id: newData.id, phone: newData.phone },
       process.env.SECRET_JWT_KEY,
       {
-        expiresIn: '30m'
+        expiresIn: '60m'
       }
     )
     res

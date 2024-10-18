@@ -125,7 +125,7 @@ export class DatoModel {
       with_load,
       with_schedule,
       payment_method,
-      delivery_request_status
+      delivery_request_status = 'pending'
     } = input
 
     const [uuidResult] = await connection.query('SELECT UUID() uuid;')
@@ -134,7 +134,7 @@ export class DatoModel {
     try {
       await connection.query(
         `INSERT INTO cargo (id, user_id, type_cargo, description_cargo, oringin_cargo, destiny_cargo, height_cargo, length_cargo, width_cargo, weight_cargo, with_load, with_schedule, payment_method, delivery_request_status)
-        VALUES (UUID_TO_BIN("${uuid}"), UUID_TO_BIN(?), ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, false)`,
+        VALUES (UUID_TO_BIN("${uuid}"), UUID_TO_BIN(?), ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
         [
           user_id,
           type_cargo,

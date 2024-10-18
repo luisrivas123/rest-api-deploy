@@ -35,7 +35,7 @@ export class AuthController {
         { id: stringify(data.id), phone: data.phone },
         process.env.SECRET_JWT_KEY,
         {
-          expiresIn: '30m'
+          expiresIn: '60m'
         }
       )
       res
