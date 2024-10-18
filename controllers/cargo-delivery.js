@@ -1,4 +1,3 @@
-import { parse } from 'uuid'
 import { validateData, validatePartialData } from '../schemas/cargo-delivery.js'
 
 export class CragoDeliveryController {

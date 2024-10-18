@@ -1,6 +1,10 @@
 import z from 'zod'
 
 const dataSchema = z.object({
+  type_of_cargo_transport: z.string({
+    invalid_type_error: 'Type of cargo transport must be a string',
+    required_error: 'Type of cargo transport is required'
+  }),
   type_cargo: z.string({
     invalid_type_error: 'Type cargo must be a string',
     required_error: 'Type cargo is required'
